@@ -41,6 +41,7 @@
 		<module>presto-phoenix-core-shaded</module>
 	</modules>
 
+    <!-- Reference document: https://central.sonatype.org/pages/apache-maven.html -->
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -364,6 +365,49 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>javadoc-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<verbose>true</verbose>
+							<includeDependencySources>true</includeDependencySources>
+							<additionalOptions>-Xdoclint:none</additionalOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.1.1</version>
 				<executions>
@@ -373,6 +417,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<createSourcesJar>true</createSourcesJar>
 							<shadedArtifactAttached>false</shadedArtifactAttached>
 							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<shadeTestJar>false</shadeTestJar>
